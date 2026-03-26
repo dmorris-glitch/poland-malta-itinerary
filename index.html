@@ -1,563 +1,104 @@
-import { useMemo, useState } from "react";
-
-const DAYS = [
-  {
-    date: "SAT MAR 28",
-    label: "Departure",
-    location: "Newark → Frankfurt",
-    color: "#2D3436",
-    icon: "✈️",
-    items: [
-      { time: "7:15 PM", text: "Depart EWR → FRA on UA 42 (7h 55m)", type: "flight" },
-      { time: "", text: "Overnight flight — try to sleep, you land early", type: "tip" },
-    ],
-  },
-  {
-    date: "SUN MAR 29",
-    label: "Arrival Day",
-    location: "Kraków",
-    color: "#6C5CE7",
-    icon: "🏰",
-    hotel: "Hotel Saski, Curio by Hilton — Old Town, 1 block from Main Square",
-    items: [
-      { time: "9:10 AM", text: "Land in Frankfurt", type: "flight" },
-      { time: "10:30 AM", text: "Connect FRA → KRK on LH/UA 9385 (1h 35m)", type: "flight" },
-      { time: "12:05 PM", text: "Arrive Kraków — taxi to hotel (~20 min)", type: "flight" },
-      { time: "1:30 PM", text: "Check in, freshen up, light lunch near hotel", type: "activity" },
-      { time: "", text: "🍽️ Lunch pick: Milkbar Tomasza — classic Polish milk bar, 5 min walk from hotel. Affordable pierogi, pancakes, and daily specials. Tourist-friendly but beloved by locals. Or grab an obwarzanek (Kraków’s famous twisted bagel) from any street cart.", type: "eat" },
-      { time: "3:00 PM", text: "Gentle walk through Planty Park — the green ring around Old Town. Shaded paths, benches everywhere for rest stops. Great for easing into the city at your own pace.", type: "activity" },
-      { time: "4:30 PM", text: "Wander into Kazimierz (Jewish Quarter) — less crowded than Main Square, full of street art, vintage shops, and cozy cafés. Walk along the Vistula riverbank.", type: "activity" },
-      { time: "6:30 PM", text: "Early dinner — jet lag will hit. Bed early to prep for Zakopane.", type: "activity" },
-      { time: "", text: "🍽️ Dinner pick: Czarna Kaczka (Black Duck) — cozy Old Town spot for regional Polish food. Great duck, pierogi, and potato pancakes. Pair with a local Srebrna Góra red wine. Reserve ahead. Alt: Pod Aniołami on Grodzka Street — meats grilled over beech fire in a 13th-century cellar.", type: "eat" },
-    ],
-  },
-  {
-    date: "MON MAR 30",
-    label: "Zakopane Day Trip",
-    location: "Tatra Mountains",
-    color: "#00B894",
-    icon: "⛰️",
-    hotel: "Hotel Saski, Curio by Hilton",
-    items: [
-      { time: "8:00 AM", text: "Pick up rental car. Drive south to Zakopane (~2 hrs). Stop in Chochołów village en route — beautifully preserved wooden houses, very few tourists. Quick 20-min stroll.", type: "activity" },
-      { time: "10:30 AM", text: "Arrive Zakopane. Ride the Gubałówka Funicular up for panoramic Tatra views. The funicular is accessible, and the walk at the top is flat/paved — ideal for your mom.", type: "must" },
-      { time: "11:30 AM", text: "Walk down Krupówki Street — taste oscypek (smoked sheep cheese), browse highlander crafts. Gentle downhill stroll.", type: "activity" },
-      { time: "12:30 PM", text: "Lunch at a traditional góral restaurant on Krupówki", type: "activity" },
-      { time: "", text: "🍽️ Lunch pick: Karczma Regionalna Bąkowa Zohylina Wyżnia — authentic highlander fare right on Krupówki. Try placek po zbójnicku (potato pancake loaded with goulash) and żurek soup. Rustic wooden interior. No reservation needed, just walk in.", type: "eat" },
-      { time: "1:30 PM", text: "Chochołów or Bukovina Thermal Baths — warm mineral pools with mountain views. Perfect way for everyone (especially mom) to rest and recover legs.", type: "must" },
-      { time: "3:30 PM", text: "Head back to Kraków. Return car by 4:30 PM.", type: "activity" },
-      { time: "5:30 PM", text: "Evening free in Old Town. Dinner at leisure — explore the Small Market Square area (quieter than the main one).", type: "activity" },
-      { time: "", text: "🍽️ Dinner pick: Miód Malina — excellent Polish food, mid-price, hidden on a quiet street near the square. Great service. Alt: Plac Nowy 1 in Kazimierz — trendy spot with fresh Polish-fusion plates on the main Kazimierz square. Or go casual with a zapiekanka (Polish street pizza) from a Plac Nowy window.", type: "eat" },
-    ],
-  },
-  {
-    date: "TUE MAR 31",
-    label: "Salt Mine + Fly to Malta",
-    location: "Wieliczka → Malta",
-    color: "#E17055",
-    icon: "🧂",
-    hotel: "Barceló Fortina Malta — Sliema seafront",
-    items: [
-      { time: "8:00 AM", text: "Breakfast at hotel. Pack bags and check out (leave luggage at front desk).", type: "activity" },
-      { time: "9:15 AM", text: "Train from Kraków Główny to Wieliczka (~30 min, runs every 20 min). The station is a 10-min walk from the hotel or a quick tram.", type: "activity" },
-      { time: "10:30 AM", text: "Wieliczka Salt Mine guided tour (pre-booked, ends ~12 PM). Note: ~800 steps total over the tour — go slow, rest when you can.", type: "must" },
-      { time: "12:30 PM", text: "Train back to Kraków. Grab lunch near Old Town.", type: "activity" },
-      { time: "", text: "🍽️ Lunch pick: Smakolyki Smakolyki — hearty, no-frills Polish classics. Daily soup + main + drink for ~36 PLN (~$10). Or try Polakowski — self-serve Polish food recommended by locals, famous for their kotlet schabowy (Polish schnitzel). Both very close to Old Town.", type: "eat" },
-      { time: "2:00 PM", text: "Free time — rest at a café, or revisit anything you missed. Collect bags from hotel.", type: "activity" },
-      { time: "", text: "🍽️ Café pick: Café Szał — hidden on the upper floor of the Cloth Hall overlooking Main Square. One of the best views in Kraków without the tourist markup. Great coffee and cake. Or Krakowskie Pączki near St. Mary’s for a Polish donut (~€1.50 each, try toffee).", type: "eat" },
-      { time: "5:30 PM", text: "Taxi/transit to Kraków Airport (KRK is ~25 min from Old Town)", type: "activity" },
-      { time: "8:10 PM", text: "Fly KRK → Malta on Ryanair FR 7115 (2h 35m)", type: "flight" },
-      { time: "10:45 PM", text: "Arrive Malta. Taxi to Barceló Fortina in Sliema (~20 min from MLA airport). Check in, sleep.", type: "flight" },
-    ],
-  },
-  {
-    date: "WED APR 1",
-    label: "Full Day in Malta",
-    location: "Valletta · Birgu · Sliema",
-    color: "#0984E3",
-    icon: "🌊",
-    hotel: "Barceló Fortina Malta",
-    items: [
-      { time: "8:00 AM", text: "Breakfast at hotel. Walk 5 min to Sliema ferry terminal → take the ferry to Valletta (10 min, runs every 30 min). Arrive before cruise ship crowds.", type: "activity" },
-      { time: "9:00 AM", text: "Upper Barrakka Gardens — stunning harbor views, shaded benches. Free. Watch the noon cannon salute if you’re still there.", type: "must" },
-      { time: "9:45 AM", text: "Wander Valletta’s quiet side streets — walk below the bastions along the Marsamxett side for a hidden waterfront path with almost no tourists.", type: "activity" },
-      { time: "11:00 AM", text: "Water taxi from Valletta to Birgu / Vittoriosa (Three Cities) — medieval, authentic, far fewer tourists than Valletta. Stroll the narrow streets and waterfront at your own pace.", type: "must" },
-      { time: "12:30 PM", text: "Lunch in Birgu — local Maltese cuisine, waterfront restaurants", type: "activity" },
-      { time: "", text: "🍽️ Lunch pick: Tal-Petut in Birgu — cozy, daily-changing menu with fresh local ingredients and a Maltese home-cooking feel. Very small, reserve ahead. Alt: any waterfront restaurant along Birgu marina — try rabbit stew or fresh fish of the day with a cold Cisk beer.", type: "eat" },
-      { time: "2:00 PM", text: "Return to Sliema. Afternoon at hotel pool/beach club (Manta Lido) or nap. Let mom rest.", type: "activity" },
-      { time: "5:00 PM", text: "Walk the Sliema promenade at golden hour — flat, seaside, great views of Valletta skyline lighting up.", type: "activity" },
-      { time: "", text: "🍽️ Snack stop: Manouche Bakery in Sliema — incredible cakes and pastries, grab a box to-go and eat on the promenade. Go before 2 PM or your pick may sell out. Also try Rivereno Gelato for handmade Italian gelato on the seafront.", type: "eat" },
-      { time: "7:00 PM", text: "Dinner in Sliema or ferry back to Valletta for evening — Valletta at night is magical and uncrowded. Try pastizzi (ricotta pastry) from any street vendor.", type: "activity" },
-      { time: "", text: "🍽️ Dinner picks: In Sliema — Ta’ Kolina for authentic Maltese (huge portions, start with the Maltese platter for the table, try the rabbit). Il-Merill — tiny hidden gem off the waterfront, reserve in advance. In Valletta — Rubino for a special meal (rabbit, octopus salad, homemade cassata). La Pira Maltese Kitchen for a relaxed mid-price option on a pretty street.", type: "eat" },
-    ],
-  },
-  {
-    date: "THU APR 2",
-    label: "Malta Morning + Travel to Rzeszów",
-    location: "Malta → Kraków → Rzeszów",
-    color: "#FDCB6E",
-    icon: "🚗",
-    hotel: "Hotel Rzeszów",
-    items: [
-      { time: "8:00 AM", text: 'Breakfast. Choose your morning: Option A — Bus to Mdina, the "Silent City" (30 min by bus). No cars allowed, honey-colored walls, almost empty in early morning. Option B — Relax at hotel pool, walk Sliema.', type: "activity" },
-      { time: "12:00 PM", text: "Back to hotel, pack up, check out", type: "activity" },
-      { time: "3:00 PM", text: "Taxi to Malta Airport (~20 min)", type: "activity" },
-      { time: "5:55 PM", text: "Fly Malta → Kraków on Ryanair FR 7114 (2h 35m)", type: "flight" },
-      { time: "8:30 PM", text: "Arrive KRK. Pick up rental car at 9 PM.", type: "flight" },
-      { time: "9:00 PM", text: "Drive Kraków → Rzeszów (~3 hrs via A4/E40). Arrive ~midnight. Check in to Hotel Rzeszów.", type: "activity" },
-      { time: "", text: "Pack snacks and water for the drive. Everyone will be tired — Donovan and German can swap driving.", type: "tip" },
-    ],
-  },
-  {
-    date: "FRI APR 3",
-    label: "Rzeszów — Family Day",
-    location: "Rzeszów",
-    color: "#A29BFE",
-    icon: "👨‍👩‍👧",
-    hotel: "Hotel Rzeszów",
-    items: [
-      { time: "Morning", text: "Sleep in after late arrival. Visiting Tina’s family.", type: "activity" },
-      { time: "Afternoon", text: "Family time. If free, Rzeszów’s Main Market Square is a pleasant short walk — not touristy at all.", type: "activity" },
-    ],
-  },
-  {
-    date: "SAT APR 4",
-    label: "Rzeszów — Family Day",
-    location: "Rzeszów",
-    color: "#A29BFE",
-    icon: "👨‍👩‍👧",
-    hotel: "Hotel Rzeszów",
-    items: [
-      { time: "All day", text: "With Tina’s family", type: "activity" },
-      { time: "", text: "Pack tonight — early departure tomorrow for the drive back to KRK.", type: "tip" },
-    ],
-  },
-  {
-    date: "SUN APR 5",
-    label: "Fly Home",
-    location: "Rzeszów → Kraków → Newark",
-    color: "#2D3436",
-    icon: "🏠",
-    items: [
-      { time: "8:30 AM", text: "Depart Rzeszów. Drive to Kraków Airport (~3 hrs).", type: "activity" },
-      { time: "12:00 PM", text: "Arrive KRK Airport area. Drop off rental car by 12:30 PM.", type: "activity" },
-      { time: "2:50 PM", text: "Fly KRK → ZRH on LX 1373 / Helvetic Airways (1h 45m)", type: "flight" },
-      { time: "4:35 PM", text: "Arrive Zürich. Short layover (50 min).", type: "flight" },
-      { time: "5:25 PM", text: "Fly ZRH → EWR on LX 18 / SWISS (8h 50m)", type: "flight" },
-      { time: "8:15 PM", text: "Arrive Newark. Welcome home.", type: "flight" },
-    ],
-  },
-];
-
-const typeStyles = {
-  flight: { bg: "#EDF2F7", border: "#A0AEC0", dot: "#718096" },
-  must: { bg: "#FFF5F5", border: "#FC8181", dot: "#E53E3E" },
-  activity: { bg: "#FFFFFF", border: "#E2E8F0", dot: "#CBD5E0" },
-  tip: { bg: "#FEFCBF", border: "#ECC94B", dot: "#D69E2E" },
-  eat: { bg: "#F0FFF4", border: "#68D391", dot: "#38A169" },
-};
-
-export default function Itinerary() {
-  const [expandedDay, setExpandedDay] = useState(1);
-  const [enteredCode, setEnteredCode] = useState("");
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const [error, setError] = useState("");
-
-  // Change this to your family code before publishing
-  const familyCode = "MORRIS980";
-
-  const tripTitle = useMemo(() => "Poland & Malta", []);
-
-  const handleUnlock = (e) => {
-    e.preventDefault();
-    if (enteredCode.trim() === familyCode) {
-      setIsUnlocked(true);
-      setError("");
-    } else {
-      setError("That code didn’t match. Please try again.");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poland & Malta Itinerary</title>
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --navy1: #1a1a2e;
+      --navy2: #16213e;
+      --navy3: #0f3460;
     }
-  };
 
-  if (!isUnlocked) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 24,
-          fontFamily: "'Helvetica Neue', sans-serif",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: 420,
-            background: "rgba(255,255,255,0.96)",
-            borderRadius: 18,
-            padding: 28,
-            boxShadow: "0 18px 50px rgba(0,0,0,0.18)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 12,
-              letterSpacing: 3,
-              textTransform: "uppercase",
-              color: "#718096",
-              marginBottom: 10,
-            }}
-          >
-            Family Access
-          </div>
+    * { box-sizing: border-box; }
 
-          <h1
-            style={{
-              margin: "0 0 8px",
-              fontSize: 28,
-              color: "#1A202C",
-              fontFamily: "'Georgia', 'Times New Roman', serif",
-              fontWeight: 400,
-            }}
-          >
-            {tripTitle}
-          </h1>
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+    }
 
-          <p
-            style={{
-              margin: "0 0 18px",
-              color: "#4A5568",
-              fontSize: 14,
-              lineHeight: 1.6,
-            }}
-          >
-            This itinerary is for attending family members only. Enter the family code to view the trip details.
-          </p>
+    .header {
+      background: linear-gradient(135deg, var(--navy1) 0%, var(--navy2) 50%, var(--navy3) 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px 32px;
+    }
 
-          <form onSubmit={handleUnlock}>
-            <input
-              type="password"
-              value={enteredCode}
-              onChange={(e) => setEnteredCode(e.target.value)}
-              placeholder="Enter family code"
-              style={{
-                width: "100%",
-                padding: "14px 14px",
-                borderRadius: 10,
-                border: "1px solid #CBD5E0",
-                fontSize: 15,
-                outline: "none",
-                boxSizing: "border-box",
-                marginBottom: 12,
-              }}
-            />
+    .eyebrow {
+      font: 600 11px/1.4 "Helvetica Neue", Arial, sans-serif;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 8px;
+    }
 
-            <button
-              type="submit"
-              style={{
-                width: "100%",
-                padding: "14px 16px",
-                borderRadius: 10,
-                border: "none",
-                background: "#1f3c88",
-                color: "#fff",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              View itinerary
-            </button>
-          </form>
+    h1 {
+      margin: 0 0 6px;
+      font-size: 30px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
 
-          {error ? (
-            <div
-              style={{
-                marginTop: 12,
-                color: "#C53030",
-                fontSize: 13,
-              }}
-            >
-              {error}
-            </div>
-          ) : null}
+    .subhead {
+      font: 14px/1.4 "Helvetica Neue", Arial, sans-serif;
+      opacity: 0.6;
+    }
 
-          <div
-            style={{
-              marginTop: 16,
-              color: "#718096",
-              fontSize: 12,
-              lineHeight: 1.5,
-            }}
-          >
-            Share the link only with family and send the code separately by text.
-          </div>
-        </div>
-      </div>
-    );
-  }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font: 11px/1.4 "Helvetica Neue", Arial, sans-serif;
+    }
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#FAF9F7",
-        fontFamily: "'Georgia', 'Times New Roman', serif",
-      }}
-    >
-      <div
-        style={{
-          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-          padding: "40px 20px 32px",
-          color: "#fff",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "11px",
-            letterSpacing: "4px",
-            textTransform: "uppercase",
-            opacity: 0.6,
-            marginBottom: 8,
-            fontFamily: "'Helvetica Neue', sans-serif",
-          }}
-        >
-          March 28 — April 5, 2026
-        </div>
-        <h1
-          style={{
-            fontSize: "28px",
-            fontWeight: 400,
-            margin: "0 0 6px",
-            letterSpacing: "1px",
-          }}
-        >
-          Poland & Malta
-        </h1>
-        <div
-          style={{
-            fontSize: "14px",
-            opacity: 0.5,
-            fontFamily: "'Helvetica Neue', sans-serif",
-          }}
-        >
-          Donovan · Tina · Laura · German
-        </div>
-      </div>
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-      <div
-        style={{
-          display: "flex",
-          gap: 16,
-          padding: "14px 20px",
-          fontSize: "11px",
-          fontFamily: "'Helvetica Neue', sans-serif",
-          color: "#718096",
-          borderBottom: "1px solid #E2E8F0",
-          background: "#fff",
-          flexWrap: "wrap",
-        }}
-      >
-        {[
-          { label: "Flight", ...typeStyles.flight },
-          { label: "Must-Do", ...typeStyles.must },
-          { label: "Where to Eat", ...typeStyles.eat },
-          { label: "Activity", ...typeStyles.activity },
-          { label: "Tip", ...typeStyles.tip },
-        ].map((l) => (
-          <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <div
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: l.dot,
-              }}
-            />
-            {l.label}
-          </div>
-        ))}
-      </div>
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
 
-      <div style={{ padding: "12px 16px 40px", maxWidth: 600, margin: "0 auto" }}>
-        {DAYS.map((day, i) => {
-          const isOpen = expandedDay === i;
-          return (
-            <div key={i} style={{ marginBottom: 8 }}>
-              <button
-                onClick={() => setExpandedDay(isOpen ? -1 : i)}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "14px 16px",
-                  background: "#fff",
-                  border: isOpen ? `2px solid ${day.color}` : "1px solid #E2E8F0",
-                  borderRadius: isOpen ? "12px 12px 0 0" : 12,
-                  cursor: "pointer",
-                  textAlign: "left",
-                  transition: "all 0.2s",
-                }}
-              >
-                <div style={{ fontSize: "22px", lineHeight: 1 }}>{day.icon}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      letterSpacing: "2px",
-                      textTransform: "uppercase",
-                      color: day.color,
-                      fontFamily: "'Helvetica Neue', sans-serif",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {day.date}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "15px",
-                      fontWeight: 600,
-                      color: "#1A202C",
-                      fontFamily: "'Helvetica Neue', sans-serif",
-                    }}
-                  >
-                    {day.label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#718096",
-                      fontFamily: "'Helvetica Neue', sans-serif",
-                    }}
-                  >
-                    {day.location}
-                  </div>
-                </div>
-                <div
-                  style={{
-                    transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 0.2s",
-                    fontSize: "14px",
-                    color: "#A0AEC0",
-                  }}
-                >
-                  ▼
-                </div>
-              </button>
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 16px 40px;
+    }
 
-              {isOpen && (
-                <div
-                  style={{
-                    background: "#fff",
-                    border: `2px solid ${day.color}`,
-                    borderTop: "none",
-                    borderRadius: "0 0 12px 12px",
-                    padding: "4px 16px 16px",
-                  }}
-                >
-                  {day.hotel && (
-                    <div
-                      style={{
-                        fontSize: "11px",
-                        fontFamily: "'Helvetica Neue', sans-serif",
-                        color: "#718096",
-                        padding: "8px 10px",
-                        background: "#F7FAFC",
-                        borderRadius: 6,
-                        marginBottom: 10,
-                        marginTop: 6,
-                      }}
-                    >
-                      🛏️ {day.hotel}
-                    </div>
-                  )}
+    details.day {
+      margin-bottom: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: transparent;
+    }
 
-                  {day.items.map((item, j) => {
-                    const s = typeStyles[item.type] || typeStyles.activity;
-                    return (
-                      <div
-                        key={j}
-                        style={{
-                          display: "flex",
-                          gap: 10,
-                          padding: "10px",
-                          marginTop: 4,
-                          background: s.bg,
-                          borderLeft: `3px solid ${s.border}`,
-                          borderRadius: "0 8px 8px 0",
-                        }}
-                      >
-                        {item.time ? (
-                          <div
-                            style={{
-                              fontSize: "11px",
-                              fontFamily: "'Helvetica Neue', sans-serif",
-                              fontWeight: 700,
-                              color: "#4A5568",
-                              minWidth: 56,
-                              flexShrink: 0,
-                              paddingTop: 1,
-                            }}
-                          >
-                            {item.time}
-                          </div>
-                        ) : null}
+    details.day summary {
+      list-style: none;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
 
-                        <div
-                          style={{
-                            fontSize: "13px",
-                            lineHeight: 1.5,
-                            color: "#2D3748",
-                            fontFamily: "'Helvetica Neue', sans-serif",
-                          }}
-                        >
-                          {item.text}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <div
-        style={{
-          padding: "20px",
-          maxWidth: 600,
-          margin: "0 auto",
-          borderTop: "1px solid #E2E8F0",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "12px",
-            fontFamily: "'Helvetica Neue', sans-serif",
-            color: "#A0AEC0",
-            lineHeight: 1.7,
-          }}
-        >
-          <strong style={{ color: "#718096" }}>Key Notes</strong>
-          <br />
-          • Rental Car 1: Mon Mar 30, 8 AM–4:30 PM (Zakopane)
-          <br />
-          • Rental Car 2: Thu Apr 2, 9 PM – Sun Apr 5, 12:30 PM (Rzeszów + return)
-          <br />
-          • Salt mine has ~800 steps — take it slow with Laura
-          <br />
-          • Sliema ferry to Valletta runs every 30 min, ~€1.50 each way
-          <br />
-          • Malta buses use Tallinja app — buy day pass for €1.50
-          <br />
-          • Kraków public transit: tram/bus tickets at kiosks or the Jakdojade app
-        </div>
-      </div>
-    </div>
-  );
-}
+    details.day[open] summary {
+      border-width: 2px;
+    }
