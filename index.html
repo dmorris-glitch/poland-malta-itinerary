@@ -1,1 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poland & Malta Itinerary</title>
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --navy1: #1a1a2e;
+      --navy2: #16213e;
+      --navy3: #0f3460;
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--navy1) 0%, var(--navy2) 50%, var(--navy3) 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px 32px;
+    }
+
+    .eyebrow {
+      font: 600 11px/1.4 "Helvetica Neue", Arial, sans-serif;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 30px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    .subhead {
+      font: 14px/1.4 "Helvetica Neue", Arial, sans-serif;
+      opacity: 0.6;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font: 11px/1.4 "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 16px 40px;
+    }
+
+    details.day {
+      margin-bottom: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    details.day summary {
+      list-style: none;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    details.day summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .summary-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .day-date {
+      font: 700 10px/1.4 "Helvetica Neue", Arial, sans-serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .day-label {
+      font: 600 15px/1.4 "Helvetica Neue", Arial, sans-serif;
+      color: #1a202c;
+    }
+
+    .day-location {
+      font: 12px/1.4 "Helvetica Neue", Arial, sans-serif;
+      color: var(--muted);
+    }
+
+    .chev {
+      font: 14px/1.4 "Helvetica Neue", Arial, sans-serif;
+      color: #a0aec0;
+      transition: transform 0.2s;
+    }
+
+    details[open] .chev {
+      transform: rotate(180deg);
+    }
+
+    .content {
+      background: #fff;
+      border: 2px solid transparent;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 4px 16px 16px;
+    }
+
+    .hotel {
+      font: 11px/1.5 "Helvetica Neue", Arial, sans-serif;
+      color: var(--muted);
+      background: #f7fafc;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin: 6px 0 10px;
+    }
+
+    .item {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+      padding: 10px;
+      border-radius: 0 8px 8px 0;
+      border-left: 3px solid #e2e8f0;
+      font: 13px/1.55 "Helvetica Neue", Arial, sans-serif;
+      color: #2d3748;
+      background: #fff;
+    }
+
+    .time {
+      min-width: 62px;
+      flex-shrink: 0;
+      font-weight: 700;
+      font-size: 11px;
+      color: #4a5568;
+      padding-top: 1px;
+    }
+
+    .footer {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .notes {
+      font: 12px/1.7 "Helvetica Neue", Arial, sans-serif;
+      color: #a0aec0;
+    }
+
+    .notes strong {
+      color: #718096;
+    }
+
+    .gate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--navy1) 0%, var(--navy2) 50%, var(--navy3) 100%);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+    }
+
+    .gate h2 {
+      margin: 0 0 8px;
+      font: 400 28px/1.2 Georgia, "Times New Roman", serif;
+      color: #1a202c;
+    }
+
+    .gate p,
+    .small {
+      color: #4a5568;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e0;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    button.unlock {
+      width: 100%;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 10px;
+      background: #1f3c88;
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .error {
+      color: #c53030;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="gate" class="gate">
+    <div class="gate-card">
+      <div class="eyebrow" style="color:#718096; opacity:1;">Family Access</div>
+      <h2>Poland &amp; Malta</h2>
+      <p>This itinerary is for attending family members only. Enter the family code to view the trip details.</p>
+      <form id="unlockForm">
+        <input id="codeInput" type="password" placeholder="Enter family code" />
+        <button class="unlock" type="submit">View itinerary</button>
+      </form>
+      <div id="error" class="error hidden">That code didn’t match. Please try again.</div>
+      <div class="small" style="margin-top:16px;">Share the link only with family and send the code separately by text.</div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="header">
+      <div class="eyebrow">March 28 — April 5, 2026</div>
+      <h1>Poland &amp; Malta</h1>
+      <div class="subhead">Donovan · Tina · Laura · German</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot" style="background:#718096"></span>Flight</div>
+      <div class="legend-item"><span class="dot" style="background:#E53E3E"></span>Must-Do</div>
+      <div class="legend-item"><span class="dot" style="background:#38A169"></span>Where to Eat</div>
+      <div class="legend-item"><span class="dot" style="background:#CBD5E0"></span>Activity</div>
+      <div class="legend-item"><span class="dot" style="background:#D69E2E"></span>Tip</div>
+    </div>
+
+    <div class="container">
+      <details class="day" open>
+        <summary style="border-color:#2D3436">
+          <div class="icon">✈️</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#2D3436">SAT MAR 28</div>
+            <div class="day-label">Departure</div>
+            <div class="day-location">Newark → Frankfurt</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#2D3436">
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">7:15 PM</div>
+            <div>Depart EWR → FRA on UA 42 (7h 55m)</div>
+          </div>
+          <div class="item" style="background:#FEFCBF;border-left-color:#ECC94B">
+            <div>Overnight flight — try to sleep, you land early</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#6C5CE7">
+          <div class="icon">🏰</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#6C5CE7">SUN MAR 29</div>
+            <div class="day-label">Arrival Day</div>
+            <div class="day-location">Kraków</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#6C5CE7">
+          <div class="hotel">🛏️ Hotel Saski, Curio by Hilton — Old Town, 1 block from Main Square</div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">9:10 AM</div>
+            <div>Land in Frankfurt</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">10:30 AM</div>
+            <div>Connect FRA → KRK on LH/UA 9385 (1h 35m)</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">12:05 PM</div>
+            <div>Arrive Kraków — taxi to hotel (~20 min)</div>
+          </div>
+          <div class="item">
+            <div class="time">1:30 PM</div>
+            <div>Check in, freshen up, light lunch near hotel</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Lunch pick: Milkbar Tomasza — classic Polish milk bar, 5 min walk from hotel. Affordable pierogi, pancakes, and daily specials. Or grab an obwarzanek from a street cart.</div>
+          </div>
+          <div class="item">
+            <div class="time">3:00 PM</div>
+            <div>Gentle walk through Planty Park — shaded paths and plenty of benches for a low-key first afternoon.</div>
+          </div>
+          <div class="item">
+            <div class="time">4:30 PM</div>
+            <div>Wander into Kazimierz (Jewish Quarter) — street art, vintage shops, cafés, and the Vistula riverbank.</div>
+          </div>
+          <div class="item">
+            <div class="time">6:30 PM</div>
+            <div>Early dinner — jet lag will hit. Bed early to prep for Zakopane.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Dinner pick: Czarna Kaczka or Pod Aniołami for classic regional Polish food.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#00B894">
+          <div class="icon">⛰️</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#00B894">MON MAR 30</div>
+            <div class="day-label">Zakopane Day Trip</div>
+            <div class="day-location">Tatra Mountains</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#00B894">
+          <div class="hotel">🛏️ Hotel Saski, Curio by Hilton</div>
+          <div class="item">
+            <div class="time">8:00 AM</div>
+            <div>Pick up rental car. Drive south to Zakopane (~2 hrs). Stop in Chochołów village on the way.</div>
+          </div>
+          <div class="item" style="background:#FFF5F5;border-left-color:#FC8181">
+            <div class="time">10:30 AM</div>
+            <div>Ride the Gubałówka Funicular for panoramic views. The top area is flat and paved.</div>
+          </div>
+          <div class="item">
+            <div class="time">11:30 AM</div>
+            <div>Walk down Krupówki Street — oscypek, highlander crafts, and a gentle stroll.</div>
+          </div>
+          <div class="item">
+            <div class="time">12:30 PM</div>
+            <div>Lunch on Krupówki.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Lunch pick: Karczma Regionalna Bąkowa Zohylina Wyżnia.</div>
+          </div>
+          <div class="item" style="background:#FFF5F5;border-left-color:#FC8181">
+            <div class="time">1:30 PM</div>
+            <div>Chochołów or Bukovina Thermal Baths — a relaxing recovery stop with mountain views.</div>
+          </div>
+          <div class="item">
+            <div class="time">3:30 PM</div>
+            <div>Head back to Kraków. Return car by 4:30 PM.</div>
+          </div>
+          <div class="item">
+            <div class="time">5:30 PM</div>
+            <div>Evening free in Old Town.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Dinner pick: Miód Malina, Plac Nowy 1, or a casual zapiekanka in Kazimierz.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#E17055">
+          <div class="icon">🧂</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#E17055">TUE MAR 31</div>
+            <div class="day-label">Salt Mine + Fly to Malta</div>
+            <div class="day-location">Wieliczka → Malta</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#E17055">
+          <div class="hotel">🛏️ Barceló Fortina Malta — Sliema seafront</div>
+          <div class="item">
+            <div class="time">8:00 AM</div>
+            <div>Breakfast, pack, check out, and leave luggage with the hotel.</div>
+          </div>
+          <div class="item">
+            <div class="time">9:15 AM</div>
+            <div>Train from Kraków Główny to Wieliczka (~30 min).</div>
+          </div>
+          <div class="item" style="background:#FFF5F5;border-left-color:#FC8181">
+            <div class="time">10:30 AM</div>
+            <div>Wieliczka Salt Mine guided tour. Note: about 800 steps total — take it slow.</div>
+          </div>
+          <div class="item">
+            <div class="time">12:30 PM</div>
+            <div>Train back to Kraków. Lunch near Old Town.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Lunch pick: Smakolyki or Polakowski.</div>
+          </div>
+          <div class="item">
+            <div class="time">2:00 PM</div>
+            <div>Free time — rest at a café and collect bags from the hotel.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Café pick: Café Szał or Krakowskie Pączki.</div>
+          </div>
+          <div class="item">
+            <div class="time">5:30 PM</div>
+            <div>Taxi/transit to Kraków Airport.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">8:10 PM</div>
+            <div>Fly KRK → Malta on Ryanair FR 7115.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">10:45 PM</div>
+            <div>Arrive Malta. Taxi to Barceló Fortina in Sliema and check in.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#0984E3">
+          <div class="icon">🌊</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#0984E3">WED APR 1</div>
+            <div class="day-label">Full Day in Malta</div>
+            <div class="day-location">Valletta · Birgu · Sliema</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#0984E3">
+          <div class="hotel">🛏️ Barceló Fortina Malta</div>
+          <div class="item">
+            <div class="time">8:00 AM</div>
+            <div>Breakfast and ferry from Sliema to Valletta.</div>
+          </div>
+          <div class="item" style="background:#FFF5F5;border-left-color:#FC8181">
+            <div class="time">9:00 AM</div>
+            <div>Upper Barrakka Gardens for harbor views and shaded benches.</div>
+          </div>
+          <div class="item">
+            <div class="time">9:45 AM</div>
+            <div>Wander Valletta’s quieter side streets and waterfront paths.</div>
+          </div>
+          <div class="item" style="background:#FFF5F5;border-left-color:#FC8181">
+            <div class="time">11:00 AM</div>
+            <div>Water taxi to Birgu / Vittoriosa and stroll the Three Cities.</div>
+          </div>
+          <div class="item">
+            <div class="time">12:30 PM</div>
+            <div>Lunch in Birgu.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Lunch pick: Tal-Petut or a waterfront restaurant with fresh fish.</div>
+          </div>
+          <div class="item">
+            <div class="time">2:00 PM</div>
+            <div>Return to Sliema. Pool, beach club, or a rest break at the hotel.</div>
+          </div>
+          <div class="item">
+            <div class="time">5:00 PM</div>
+            <div>Walk the Sliema promenade at golden hour.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Snack stop: Manouche Bakery or Rivereno Gelato.</div>
+          </div>
+          <div class="item">
+            <div class="time">7:00 PM</div>
+            <div>Dinner in Sliema or Valletta.</div>
+          </div>
+          <div class="item" style="background:#F0FFF4;border-left-color:#68D391">
+            <div>🍽️ Dinner picks: Ta’ Kolina, Il-Merill, Rubino, or La Pira.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#FDCB6E">
+          <div class="icon">🚗</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#FDCB6E">THU APR 2</div>
+            <div class="day-label">Malta Morning + Travel to Rzeszów</div>
+            <div class="day-location">Malta → Kraków → Rzeszów</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#FDCB6E">
+          <div class="hotel">🛏️ Hotel Rzeszów</div>
+          <div class="item">
+            <div class="time">8:00 AM</div>
+            <div>Breakfast. Choose Mdina in the morning or a slow start in Sliema.</div>
+          </div>
+          <div class="item">
+            <div class="time">12:00 PM</div>
+            <div>Back to the hotel, pack, and check out.</div>
+          </div>
+          <div class="item">
+            <div class="time">3:00 PM</div>
+            <div>Taxi to Malta Airport.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">5:55 PM</div>
+            <div>Fly Malta → Kraków on Ryanair FR 7114.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">8:30 PM</div>
+            <div>Arrive KRK. Pick up rental car at 9 PM.</div>
+          </div>
+          <div class="item">
+            <div class="time">9:00 PM</div>
+            <div>Drive Kraków → Rzeszów (~3 hrs via A4/E40). Arrive around midnight.</div>
+          </div>
+          <div class="item" style="background:#FEFCBF;border-left-color:#ECC94B">
+            <div>Pack snacks and water for the drive. Donovan and German can swap driving.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#A29BFE">
+          <div class="icon">👨‍👩‍👧</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#A29BFE">FRI APR 3</div>
+            <div class="day-label">Rzeszów — Family Day</div>
+            <div class="day-location">Rzeszów</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#A29BFE">
+          <div class="hotel">🛏️ Hotel Rzeszów</div>
+          <div class="item">
+            <div class="time">Morning</div>
+            <div>Sleep in after the late arrival. Visit Tina’s family.</div>
+          </div>
+          <div class="item">
+            <div class="time">Afternoon</div>
+            <div>Family time. If there’s free time, Rzeszów’s Main Market Square is an easy short walk.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#A29BFE">
+          <div class="icon">👨‍👩‍👧</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#A29BFE">SAT APR 4</div>
+            <div class="day-label">Rzeszów — Family Day</div>
+            <div class="day-location">Rzeszów</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#A29BFE">
+          <div class="hotel">🛏️ Hotel Rzeszów</div>
+          <div class="item">
+            <div class="time">All day</div>
+            <div>With Tina’s family.</div>
+          </div>
+          <div class="item" style="background:#FEFCBF;border-left-color:#ECC94B">
+            <div>Pack tonight — departure is early tomorrow for the drive back to Kraków Airport.</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="day">
+        <summary style="border-color:#2D3436">
+          <div class="icon">🏠</div>
+          <div class="summary-main">
+            <div class="day-date" style="color:#2D3436">SUN APR 5</div>
+            <div class="day-label">Fly Home</div>
+            <div class="day-location">Rzeszów → Kraków → Newark</div>
+          </div>
+          <div class="chev">▼</div>
+        </summary>
+        <div class="content" style="border-color:#2D3436">
+          <div class="item">
+            <div class="time">8:30 AM</div>
+            <div>Depart Rzeszów. Drive to Kraków Airport (~3 hrs).</div>
+          </div>
+          <div class="item">
+            <div class="time">12:00 PM</div>
+            <div>Arrive KRK airport area. Drop off rental car by 12:30 PM.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">2:50 PM</div>
+            <div>Fly KRK → ZRH on LX 1373 / Helvetic Airways.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">4:35 PM</div>
+            <div>Arrive Zürich. Short layover.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">5:25 PM</div>
+            <div>Fly ZRH → EWR on LX 18 / SWISS.</div>
+          </div>
+          <div class="item" style="background:#EDF2F7;border-left-color:#A0AEC0">
+            <div class="time">8:15 PM</div>
+            <div>Arrive Newark. Welcome home.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="footer">
+      <div class="notes">
+        <strong>Key Notes</strong><br />
+        • Rental Car 1: Mon Mar 30, 8 AM–4:30 PM (Zakopane)<br />
+        • Rental Car 2: Thu Apr 2, 9 PM – Sun Apr 5, 12:30 PM (Rzeszów + return)<br />
+        • Salt mine has ~800 steps — take it slow with Laura<br />
+        • Sliema ferry to Valletta runs every 30 min, ~€1.50 each way<br />
+        • Malta buses use Tallinja app — buy day pass for €1.50<br />
+        • Kraków public transit: tram/bus tickets at kiosks or the Jakdojade app
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FAMILY_CODE = "MORRIS2026";
+
+    const form = document.getElementById("unlockForm");
+    const input = document.getElementById("codeInput");
+    const error = document.getElementById("error");
+    const gate = document.getElementById("gate");
+    const app = document.getElementById("app");
+
+    if (sessionStorage.getItem("familyItineraryUnlocked") === "yes") {
+      gate.classList.add("hidden");
+      app.classList.remove("hidden");
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (input.value.trim() === FAMILY_CODE) {
+        sessionStorage.setItem("familyItineraryUnlocked", "yes");
+        gate.classList.add("hidden");
+        app.classList.remove("hidden");
+        error.classList.add("hidden");
+      } else {
+        error.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
